@@ -23,14 +23,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if user is logged in on mount
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const response = await authService.getMe();
-          setUser(response.data);
-        } catch (error) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('token');
+        if (token) {
+          try {
+            const response = await authService.getMe();
+            setUser(response.data);
+          } catch (error) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          }
         }
       }
       setLoading(false);
@@ -42,8 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (data: LoginRequest) => {
     try {
       const response: AuthResponse = await authService.login(data);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.data));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
       setUser(response.data);
       toast.success('Login successful!');
     } catch (error: any) {
@@ -55,8 +59,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (data: RegisterRequest) => {
     try {
       const response: AuthResponse = await authService.register(data);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.data));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
       setUser(response.data);
       toast.success('Registration successful!');
     } catch (error: any) {
@@ -66,15 +72,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
     setUser(null);
     toast.success('Logged out successfully');
   };
 
   const updateUser = (updatedUser: User) => {
     setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
   };
 
   return (

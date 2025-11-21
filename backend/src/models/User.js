@@ -72,19 +72,21 @@ const userSchema = new mongoose.Schema(
 // Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
-    next();
+    return next();
   }
   const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_ROUNDS) || 10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 // Hash PIN before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('pin')) {
-    next();
+    return next();
   }
   const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_ROUNDS) || 10);
   this.pin = await bcrypt.hash(this.pin, salt);
+  next();
 });
 
 // Compare password
