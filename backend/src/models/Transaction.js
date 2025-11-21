@@ -61,7 +61,6 @@ const transactionSchema = new mongoose.Schema(
 // Index for faster queries
 transactionSchema.index({ sender: 1, createdAt: -1 });
 transactionSchema.index({ recipient: 1, createdAt: -1 });
-transactionSchema.index({ reference: 1 });
 
 // Generate transaction reference
 transactionSchema.statics.generateReference = function () {
